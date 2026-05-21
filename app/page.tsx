@@ -112,11 +112,19 @@ export default function Home() {
 
   async function loadData() {
     await seedIfEmpty();
-    const { data: objs } = await supabase.from("objects").select("*").order("id");
-    const { data: its } = await supabase.from("items").select("*").order("id");
-    const { data: st } = await supabase.from("stock").select("*");
-    const { data: mov } = await supabase.from("movements").select("*").order("created_at", { ascending: false }).limit(50);
+    const { data: objs, error: oErr } = await supabase.from("objects").select("*").order("id");
+const { data: its, error: iErr } = await supabase.from("items").select("*").order("id");
+const { data: st, error: sErr } = await supabase.from("stock").select("*");
+const { data: mov, error: mErr } = await supabase
+  .from("movements")
+  .select("*")
+  .order("created_at", { ascending: false })
+  .limit(50);
 
+console.log("OBJECTS", objs, oErr);
+console.log("ITEMS", its, iErr);
+console.log("STOCK", st, sErr);
+console.log("MOVEMENTS", mov, mErr);
     setObjects(objs || []);
     setItems(its || []);
     setStock(st || []);
