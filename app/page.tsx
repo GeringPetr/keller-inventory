@@ -80,7 +80,6 @@ export default function Home() {
   const [itemId, setItemId] = useState<number | null>(null);
   const [qty, setQty] = useState(1);
   const [msg, setMsg] = useState("");
-  const [debug, setDebug] = useState("");
 
   const t = tr[lang];
 
@@ -332,9 +331,6 @@ if ((its || []).length > 0) {
           </div>
         )}
       </div>
-      <pre style={{ background: "#111", color: "#0f0", padding: 16, marginTop: 16, whiteSpace: "pre-wrap" }}>
-  {debug}
-</pre>
     </main>
   );
 }
