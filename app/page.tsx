@@ -129,8 +129,18 @@ console.log("MOVEMENTS", mov, mErr);
     setItems(its || []);
     setStock(st || []);
     setHistory(mov || []);
-    if (objs?.[0]) setObjectId(objs[0].id);
-    if (its?.[0]) setItemId(its[0].id);
+    setObjects(objs || []);
+setItems(its || []);
+setStock(st || []);
+setHistory(mov || []);
+
+if ((objs || []).length > 0) {
+  setObjectId((prev) => prev ?? objs![0].id);
+}
+
+if ((its || []).length > 0) {
+  setItemId((prev) => prev ?? its![0].id);
+}
   }
 
   useEffect(() => {
