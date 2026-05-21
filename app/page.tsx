@@ -80,6 +80,7 @@ export default function Home() {
   const [itemId, setItemId] = useState<number | null>(null);
   const [qty, setQty] = useState(1);
   const [msg, setMsg] = useState("");
+  const [debug, setDebug] = useState("");
 
   const t = tr[lang];
 
@@ -111,16 +112,34 @@ export default function Home() {
   }
 
   async function loadData() {
-    await seedIfEmpty();
+  try {
     const { data: objs, error: oErr } = await supabase.from("objects").select("*").order("id");
-const { data: its, error: iErr } = await supabase.from("items").select("*").order("id");
-const { data: st, error: sErr } = await supabase.from("stock").select("*");
-const { data: mov, error: mErr } = await supabase
-  .from("movements")
-  .select("*")
-  .order("created_at", { ascending: false })
-  .limit(50);
+    const { data: its, error: iErr } = await supabase.from("items").select("*").order("id");
+    const { data: st, error: sErr } = await supabase.from("stock").select("*");
+    const { data: mov, error: mErr } = await supabase
+      .from("movements")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(50);
 
+    if (oErr || iErr || sErr || mErr) {
+      setDebug(JSON.stringify({ oErr, iErr, sErr, mErr }, null, 2));
+      return;
+    }
+
+    setObjects(objs || []);
+    setItems(its || []);
+    setStock(st || []);
+    setHistory(mov || []);
+
+    if ((objs || []).length > 0) setObjectId(objs![0].id);
+    if ((its || []).length > 0) setItemId(its![0].id);
+
+    setDebug(`Loaded: objects=${objs?.length}, items=${its?.length}, stock=${st?.length}`);
+  } catch (e: any) {
+    setDebug(e.message || String(e));
+  }
+}
 console.log("OBJECTS", objs, oErr);
 console.log("ITEMS", its, iErr);
 console.log("STOCK", st, sErr);
@@ -313,6 +332,9 @@ if ((its || []).length > 0) {
           </div>
         )}
       </div>
+      <pre style={{ background: "#111", color: "#0f0", padding: 16, marginTop: 16, whiteSpace: "pre-wrap" }}>
+  {debug}
+</pre>
     </main>
   );
 }
